@@ -52,3 +52,137 @@ Student::~Student()
 	delete[] subjectsMarks;
 	AddConsoleTextColor("Студент " + fio + " удален");
 }
+
+bool Student::AddSubjectMark(string _subjectName, string _subjectMark)
+{
+	SubjectMark newSubjectMark = { _subjectName, _subjectMark };
+	if (*this == newSubjectMark) {
+		return false;
+	}
+	SubjectMark *newSubjectsMarks = new SubjectMark[subjCount+1];
+	for (int i = 0; i < subjCount; i++) {
+		newSubjectsMarks[i] = subjectsMarks[i];
+	}
+	newSubjectsMarks[subjCount] = newSubjectMark;
+	delete[] subjectsMarks;
+	subjCount++;
+	subjectsMarks = newSubjectsMarks;
+	return true;
+}
+
+string Student::GetFio() const
+{
+	return fio;
+}
+
+string Student::GetGroup() const
+{
+	return group;
+}
+
+int Student::GetSubjectMarkCount() const
+{
+	return subjCount;
+}
+
+SubjectMark * Student::GetAllSubjects()
+{
+	SubjectMark* _subjectsMarks = new SubjectMark[subjCount];
+	for (int i = 0; i < subjCount; i++) {
+		_subjectsMarks[i] = subjectsMarks[i];
+	}
+	return _subjectsMarks;
+}
+
+SubjectMark Student::GetSubjectMark(int number) const
+{
+	if (number < subjCount && number >= 0) {
+		return subjectsMarks[number];
+	}
+	return SubjectMark();
+}
+
+SubjectMark Student::GetSubjectMark(string _subjectName) const
+{
+	if (subjCount > 0) {
+		for (int i = 0; i < subjCount; i++) {
+			if (subjectsMarks[i].subject == _subjectName) {
+				return subjectsMarks[i];
+			}
+		}
+	}
+	return SubjectMark();
+}
+
+bool Student::SetFio(string _fio)
+{
+	fio = _fio;
+	return true;
+}
+
+bool Student::SetGroup(string _group)
+{
+	group = _group;
+	return true;
+}
+
+bool Student::SetAllSubjectMarks(int _subjCount, SubjectMark * _subjectsMarks)
+{
+	if (_subjCount > 0) {
+		int tmpSubjCount = subjCount;
+		SubjectMark * tmpSubjMarks = 0;
+		if (tmpSubjCount > 0) {
+			tmpSubjMarks = new SubjectMark[tmpSubjCount];
+			for (int i = 0; i < tmpSubjCount; i++) {
+				tmpSubjMarks[i] = subjectsMarks[i];
+			}
+			delete[] subjectsMarks;
+			subjCount = 0;
+		}
+		for (int i = 0; i < subjCount; i++) {
+			if (AddSubjectMark(_subjectsMarks[i].subject, _subjectsMarks[i].mark) == false) {
+				subjCount = tmpSubjCount;
+				subjectsMarks = tmpSubjMarks;
+				return false;
+			}
+		}
+		if (tmpSubjCount > 0) {
+			delete[] tmpSubjMarks;
+		}
+	}
+	else {
+		return false;
+	}
+	return true;
+}
+
+bool Student::SetSubjectMark(SubjectMark _subjectMark, int number)
+{
+	if (number >= 0 && number < subjCount) {
+		subjectsMarks[number] = _subjectMark;
+		return true;
+	}
+	return false;
+}
+
+bool Student::SetSubjectMark(SubjectMark _subjectMark)
+{
+	for (int i = 0; i < subjCount; i++) {
+		if (subjectsMarks[i].subject.compare(_subjectMark.subject) == 0) {
+			subjectsMarks[i].mark = _subjectMark.mark;
+			return true;
+		}
+	}
+	return false;
+}
+
+void Student::Print() const
+{
+	/*string line = "_";
+	
+	AddConsoleTextColor()
+	cout << left << "Студент: " + student.fio << endl;
+	cout << left << "Группа: " + student.group << endl;
+	cout << left << "ОЦЕНКИ" << endl;
+	cout.fill('_');*/
+}

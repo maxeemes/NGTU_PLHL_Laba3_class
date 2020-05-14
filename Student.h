@@ -20,22 +20,24 @@ public:
 	string GetFio() const;
 	string GetGroup() const;
 	int GetSubjectMarkCount() const;
-	SubjectMark *GetAllSubjects(int &count);
+	SubjectMark *GetAllSubjects();
 	SubjectMark GetSubjectMark(int number) const;
 	SubjectMark GetSubjectMark(string _subjectName) const;
 	bool SetFio(string _fio);
 	bool SetGroup(string _group);
-	bool SetAllSubjectMarks(int _subjCount, SubjectMark *_subjectMarks);
+	bool SetAllSubjectMarks(int _subjCount, SubjectMark *_subjectsMarks); 
 	bool SetSubjectMark(SubjectMark _subjectMark, int number);
 	bool SetSubjectMark(SubjectMark _subjectMark);
-	void Print() const;
+	void Print() const;//TODO COMPLETE Print()
 	string ToString() const;
 
 	static string GetListName();
 	static void SetListName(string _listName);
 	/****************************************/
 	Student &operator=(const Student &ref);
+	Student &operator=(SubjectMark _subjectMark);
 	Student &operator+=(SubjectMark _subjectMark);
+	bool &operator==(SubjectMark _subjectMark);
 	operator float() const;
 	operator bool() const;
 	Student &operator!();
