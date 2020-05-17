@@ -178,6 +178,14 @@ bool Student::SetSubjectMark(SubjectMark _subjectMark)
 
 void Student::Print() const
 {
+	OutputTable *studentsMarks = CreateOutputTable();
+	studentsMarks->columnsCount = 2;
+	studentsMarks->rowsCount = subjCount + 1;
+	studentsMarks->content = new string*[subjCount + 1];
+	studentsMarks->content[0] = new string[2]{"опедлер", "нжемйю"};
+	for (int i = 0; i < subjCount; i++) {
+		studentsMarks->content[i + 1] = new string[2]{subjectsMarks[i].subject, subjectsMarks[i].mark};
+	}
 	/*string line = "_";
 	
 	AddConsoleTextColor()
