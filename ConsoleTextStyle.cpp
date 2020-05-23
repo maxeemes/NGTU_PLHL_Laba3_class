@@ -48,10 +48,12 @@ bool AddConsoleTable(OutputTable * outTable)
 		AddConsoleTextColor("Ошибка отображения таблицы! Невозможно отобразить таблицу!", 12);
 		return false;
 	}
+	//Объявление основных переменных
 	//max width 120
 	int *columsWidth = new int[outTable->columnsCount];
 	const int consoleWidth = 120;
 	int columnWidth = 0, sumColumsWidth = 0, spaceForColumnContent = consoleWidth - 1 - outTable->columnsCount;
+	//Валидация таблицы
 	for (int i = 0; i < outTable->columnsCount; i++) {
 		columsWidth[i] = 0;
 		for (int j = 0; j < outTable->columnsCount; j++) {

@@ -26,11 +26,11 @@ Student::Student(string _fio, string _group, int _subjCount, SubjectMark * _subj
 
 Student::Student(string _description)
 {
-	if (InitStudentsFromString(_description)) {
+	if (InitStudentFromString(_description)) {
 		AddConsoleTextColor("Студент " + fio + " добавлен из строки");
 	}
 	else {
-		AddConsoleTextColor("Ошибка добавления студента из строки: " + _description);
+		AddConsoleTextColor("Ошибка добавления студента из строки: """ + _description + """", 12);
 	}
 }
 
@@ -56,17 +56,15 @@ Student::~Student()
 bool Student::AddSubjectMark(string _subjectName, string _subjectMark)
 {
 	SubjectMark newSubjectMark = { _subjectName, _subjectMark };
-	if (*this == newSubjectMark) {
+	return AddSubjectMark(newSubjectMark);
+}
+
+bool Student::AddSubjectMark(SubjectMark _subjectMark)
+{
+	if (*this == _subjectMark) {
 		return false;
 	}
-	SubjectMark *newSubjectsMarks = new SubjectMark[subjCount+1];
-	for (int i = 0; i < subjCount; i++) {
-		newSubjectsMarks[i] = subjectsMarks[i];
-	}
-	newSubjectsMarks[subjCount] = newSubjectMark;
-	delete[] subjectsMarks;
-	subjCount++;
-	subjectsMarks = newSubjectsMarks;
+	*this += _subjectMark;
 	return true;
 }
 
@@ -114,6 +112,11 @@ SubjectMark Student::GetSubjectMark(string _subjectName) const
 	return SubjectMark();
 }
 
+string Student::GetListName()
+{
+	return listName;
+}
+
 bool Student::SetFio(string _fio)
 {
 	fio = _fio;
@@ -129,6 +132,7 @@ bool Student::SetGroup(string _group)
 bool Student::SetAllSubjectMarks(int _subjCount, SubjectMark * _subjectsMarks)
 {
 	if (_subjCount > 0) {
+		//создание копии на случай неудачного выполнения
 		int tmpSubjCount = subjCount;
 		SubjectMark * tmpSubjMarks = 0;
 		if (tmpSubjCount > 0) {
@@ -149,11 +153,39 @@ bool Student::SetAllSubjectMarks(int _subjCount, SubjectMark * _subjectsMarks)
 		if (tmpSubjCount > 0) {
 			delete[] tmpSubjMarks;
 		}
+		return true;
+	}
+	AddConsoleTextColor("Ошибка добавления всех оценок!", 12);
+	return false;
+}
+
+bool Student::SetAllSubjectMarks(string _subjectsMarks)
+{
+	//создание копии на случай неудачного выполнения
+	int tmpSubjCount = subjCount;
+	SubjectMark * tmpSubjMarks = 0;
+	if (tmpSubjCount > 0) {
+		tmpSubjMarks = new SubjectMark[tmpSubjCount];
+		for (int i = 0; i < tmpSubjCount; i++) {
+			tmpSubjMarks[i] = subjectsMarks[i];
+		}
+		delete[] subjectsMarks;
+		subjCount = 0;
+	}
+	if (AddSubjectsMarksFromString(_subjectsMarks)) {
+		if (tmpSubjCount > 0) {
+			delete[] tmpSubjMarks;
+		}
+		return true;
 	}
 	else {
-		return false;
+		if (tmpSubjCount > 0) {
+			subjCount = tmpSubjCount;
+			subjectsMarks = tmpSubjMarks;
+		}
 	}
-	return true;
+	AddConsoleTextColor("Ошибка выставления новых оценок студента! Изменения отменены.", 12);
+	return false;
 }
 
 bool Student::SetSubjectMark(SubjectMark _subjectMark, int number)
@@ -176,6 +208,11 @@ bool Student::SetSubjectMark(SubjectMark _subjectMark)
 	return false;
 }
 
+void Student::SetListName(string _listName)
+{
+	listName = _listName;
+}
+
 void Student::Print() const
 {
 	OutputTable *studentsMarks = CreateOutputTable();
@@ -186,11 +223,165 @@ void Student::Print() const
 	for (int i = 0; i < subjCount; i++) {
 		studentsMarks->content[i + 1] = new string[2]{subjectsMarks[i].subject, subjectsMarks[i].mark};
 	}
-	/*string line = "_";
-	
-	AddConsoleTextColor()
-	cout << left << "Студент: " + student.fio << endl;
-	cout << left << "Группа: " + student.group << endl;
-	cout << left << "ОЦЕНКИ" << endl;
-	cout.fill('_');*/
+	AddConsoleTable(studentsMarks);
+	KillOutputTable(studentsMarks);
+}
+
+string Student::ToString() const
+{
+	string res = "";
+	res += "Студент: " + (fio.empty() ? "ИМЯ ОТСУТСТВУЕТ" : fio) + "; ";
+	res += "Группа: " + (group.empty() ? "ГРУППА ОТСУТСТВУЕТ" : group) + "; ";
+	res += "Оценки: ";
+	if (subjCount) {
+		for (int i = 0; i < subjCount; i++) {
+			res += i > 0 ? ", " : "";
+			res += (subjectsMarks[i].subject.empty() ? "ИМЯ ПРЕДМЕТА ОТСУТСТВУЕТ" : subjectsMarks[i].subject) + " - ";
+			res += (subjectsMarks[i].mark.empty() ? "ОЦЕНКА ОТСУТСТВУЕТ" : subjectsMarks[i].mark);
+		}
+	}
+	res += ";";
+	return res;
+}
+
+Student & Student::operator=(const Student & ref)
+{
+	if (this != &ref) {
+		delete[] subjectsMarks;
+		fio = ref.fio;
+		group = ref.group;
+		subjCount = ref.subjCount;
+		subjectsMarks = new SubjectMark[subjCount];
+		for (int i = 0; i < subjCount; i++) {
+			subjectsMarks[i] = ref.subjectsMarks[i];
+		}
+	}
+	return *this;
+}
+
+Student & Student::operator=(SubjectMark _subjectMark)
+{
+	if (SetSubjectMark(_subjectMark)) {
+		return *this;
+	}
+	else {
+		*this += _subjectMark;
+	}
+	return *this;
+}
+
+Student & Student::operator+=(SubjectMark _subjectMark)
+{
+	SubjectMark *newSubjectsMarks = new SubjectMark[subjCount + 1];
+	for (int i = 0; i < subjCount; i++) {
+		newSubjectsMarks[i] = subjectsMarks[i];
+	}
+	newSubjectsMarks[subjCount] = _subjectMark;
+	delete[] subjectsMarks;
+	subjCount++;
+	subjectsMarks = newSubjectsMarks;
+	return *this;
+}
+
+bool & Student::operator==(SubjectMark const _subjectMark) const
+{
+	bool isFound = false;
+	int number = 0;
+	while (isFound == false && number < subjCount)
+	{
+		isFound = _subjectMark.subject == subjectsMarks[number].subject;
+	}
+	return isFound;
+}
+
+Student::operator bool() const
+{
+	if (fio.empty() == true) return false;
+	if (group.empty() == true) return false;
+	if (subjCount <= 0) return false;
+	for (int i = 0; i < subjCount; i++)
+	{
+		if (subjectsMarks[i].subject.empty() == true) return false;
+		if (subjectsMarks[i].mark.empty() == true) return false;
+	}
+	return true;
+}
+
+bool Student::InitStudentFromString(string student)
+{
+	int fioPos = -1, groupPos = -1, marksPos = -1, endPos = -1;
+	fioPos = student.find("Студент: ") + 9;
+	groupPos = student.find("; Группа: ", fioPos) + 10;
+	marksPos = student.find("; Оценки: ", groupPos) + 10;
+	endPos = student.find(';', marksPos);
+	if (fioPos >= 9 && groupPos >= 10 && marksPos >= 10 && endPos >= 1)
+	{
+		fio = student.substr(fioPos, groupPos - 10 - fioPos);
+		group = student.substr(groupPos, marksPos - 10 - groupPos);
+		subjCount = 0;
+		if (marksPos != endPos)
+		{
+			AddSubjectsMarksFromString(student.substr(marksPos, endPos - marksPos + 1));
+		}
+		return true;
+	}
+	else
+	{
+		AddConsoleTextColor("Ошибка распознавания строки!", 12);
+		if (fioPos < 9) AddConsoleTextColor("Не найдено имя студента!", 12);
+		if (groupPos < 10) AddConsoleTextColor("Не найдена группа студента!", 12);
+		if (marksPos < 10) AddConsoleTextColor("На найдены оценки студента!", 12);
+		if (endPos < 1) AddConsoleTextColor("Не найдено окончание строки!", 12);
+	}
+	return false;
+}
+
+bool Student::AddSubjectsMarksFromString(string subjects)
+{
+	int endPos = subjects.find(";");
+	if (endPos > 0)
+	{
+		int nextPos = -2, newSubjectsCount = subjCount;
+		do
+		{
+			newSubjectsCount++;
+			nextPos = subjects.find(", ", nextPos + 2);
+		} while (nextPos > 0);
+
+		SubjectMark *newSubjects = new SubjectMark[newSubjectsCount];
+
+		for (int i = 0; i < subjCount; i++) {
+			newSubjects[i].mark = subjectsMarks[i].mark;
+			newSubjects[i].subject = subjectsMarks[i].subject;
+		}
+
+		string strSubj = "";
+		int prevPos = 0, partPos;
+		nextPos = 0;
+		for (int i = subjCount; i < newSubjectsCount; i++)
+		{
+			nextPos = subjects.find(", ", prevPos);
+			nextPos = nextPos > 0 ? nextPos : endPos;
+			strSubj = subjects.substr(prevPos, nextPos - prevPos);
+			prevPos = nextPos + 2;
+			partPos = strSubj.find(" - ");
+			if (partPos > 0)
+			{
+				newSubjects[i].subject = strSubj.substr(0, partPos);
+				newSubjects[i].mark = strSubj.substr(partPos + 3);
+			}
+			else
+			{
+				newSubjects[i].subject = strSubj;
+				newSubjects[i].mark = "-";
+			}
+		}
+		delete[] subjectsMarks;
+		subjCount = newSubjectsCount;
+		subjectsMarks = newSubjects;
+		return true;
+	}
+	else {
+		return false;
+	}
 }
