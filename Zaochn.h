@@ -14,7 +14,7 @@ public:
 	bool GetIsPayed() const;
 	bool SetIsPayed(bool _isPayed);
 private:
-	bool isPayed;
+	bool isPayed = false;
 	bool ParseIsPayed(string _description);
 };
 #endif
