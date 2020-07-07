@@ -111,12 +111,16 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="ConsoleTextStyle.h" />
+    <ClInclude Include="Ochn.h" />
     <ClInclude Include="Student.h" />
+    <ClInclude Include="Zaochn.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="ConsoleTextStyle.cpp" />
     <ClCompile Include="Laba3_class.cpp" />
+    <ClCompile Include="Ochn.cpp" />
     <ClCompile Include="Student.cpp" />
+    <ClCompile Include="Zaochn.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

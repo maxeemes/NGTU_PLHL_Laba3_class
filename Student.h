@@ -1,4 +1,6 @@
 #include<string>
+#include "ConsoleTextStyle.h"
+
 #ifndef STUDENT_H
 #define STUDENT_H
 
@@ -30,13 +32,13 @@ public:
 	bool SetAllSubjectMarks(string _subjectsMarks);
 	bool SetSubjectMark(SubjectMark _subjectMark, int number);
 	bool SetSubjectMark(SubjectMark _subjectMark);
-	void Print() const;
-	string ToString() const;
+	virtual void Print() const;
+	virtual string ToString() const;
 
 	static string GetListName();
 	static void SetListName(string _listName);
 	/****************************************/
-	Student &operator=(const Student &ref);
+	virtual Student &operator=(const Student &ref);
 	Student &operator=(SubjectMark _subjectMark);
 	Student &operator+=(SubjectMark _subjectMark);
 	bool &operator==(SubjectMark const _subjectMark) const;

@@ -1,5 +1,4 @@
 #include "Student.h"
-#include "ConsoleTextStyle.h"
 
 string Student::listName = "studentsMarks";
 
@@ -215,6 +214,9 @@ void Student::SetListName(string _listName)
 
 void Student::Print() const
 {
+	AddConsoleTextColor("Ñòóäåíò: " + fio);
+	AddConsoleTextColor("Ãðóïïà: " + group);
+	AddConsoleTextColor("ÎÖÅÍÊÈ");
 	OutputTable *studentsMarks = CreateOutputTable();
 	studentsMarks->columnsCount = 2;
 	studentsMarks->rowsCount = subjCount + 1;
@@ -223,7 +225,15 @@ void Student::Print() const
 	for (int i = 0; i < subjCount; i++) {
 		studentsMarks->content[i + 1] = new string[2]{subjectsMarks[i].subject, subjectsMarks[i].mark};
 	}
-	AddConsoleTable(studentsMarks);
+	studentsMarks->highLightsCount = 1;
+	studentsMarks->highLights = new string[1]{ "íå çà÷åò" };
+	studentsMarks->highLightsColor = 12;
+	if (AddConsoleTable(studentsMarks) == false)
+	{
+		for (int s = 0; s < subjCount; s++) {
+			AddConsoleTextColor(subjectsMarks[s].subject + '-' + subjectsMarks[s].mark);
+		}
+	}
 	KillOutputTable(studentsMarks);
 }
 
@@ -240,7 +250,7 @@ string Student::ToString() const
 			res += (subjectsMarks[i].mark.empty() ? "ÎÖÅÍÊÀ ÎÒÑÓÒÑÒÂÓÅÒ" : subjectsMarks[i].mark);
 		}
 	}
-	res += ";";
+	res += "; ";
 	return res;
 }
 
@@ -376,7 +386,7 @@ bool Student::AddSubjectsMarksFromString(string subjects)
 				newSubjects[i].mark = "-";
 			}
 		}
-		delete[] subjectsMarks;
+		if(subjCount > 0) delete[] subjectsMarks;
 		subjCount = newSubjectsCount;
 		subjectsMarks = newSubjects;
 		return true;

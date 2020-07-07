@@ -21,6 +21,12 @@
     <ClInclude Include="ConsoleTextStyle.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Zaochn.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Ochn.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Student.cpp">
@@ -30,6 +36,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Laba3_class.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Zaochn.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Ochn.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
