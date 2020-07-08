@@ -8,7 +8,7 @@ public:
 	Ochn(string _fio, string _group, int _subjCount, SubjectMark *_subjectMarks, bool _isBudget, bool _isPayed);
 	Ochn(string _description);
 	Ochn(const Ochn &ref);
-	virtual Ochn &operator=(const Ochn &right);
+	Ochn &operator=(const Ochn &ref);
 	virtual void Print() const;
 	virtual string ToString() const;
 	bool GetIsBudget() const;

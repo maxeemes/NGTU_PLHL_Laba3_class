@@ -29,11 +29,10 @@ void userStudentChangeListName();
 void userSaveStudentsToFile();
 
 Student *CreateStudent(string _description = "");
-Student *CreateStudent(Student *student);
 bool AddStudent(Student *newStudent);
 bool AddStudentsFromFile(string filePath);
 bool SelectStudentNum(int &studentNum);
-bool userStudentCreate(Student *newStudent, string exampleStudent);
+bool userStudentCreate(Student **newStudent, string exampleStudent);
 bool SaveStudentsToFile(const string filePath);
 
 string readFilePath(string _defPath);
@@ -184,7 +183,7 @@ void userStudentAdd()
 	bool isSuccess = false, isExit = false;
 	do
 	{
-		isSuccess = userStudentCreate(newStudent, exampleStudentString);
+		isSuccess = userStudentCreate(&newStudent, exampleStudentString);
 		isSuccess = isSuccess ? AddStudent(newStudent) : isSuccess;
 		if (isSuccess == false && studentsCount < maxStudentsCount) {
 			AddConsoleTextColor("Попробовать создать студента снова?\n0. Да\t1. Нет");
@@ -217,7 +216,7 @@ void userStudentEdit()
 		isSuccess = false;
 		do
 		{
-			isSuccess = userStudentCreate(newStudent, students[studentNum]->ToString());
+			isSuccess = userStudentCreate(&newStudent, students[studentNum]->ToString());
 			if (isSuccess == false) {
 				AddConsoleTextColor("Попробовать создать студента снова?\n0. Да\t1. Нет");
 				cin >> isExit;
@@ -347,19 +346,6 @@ Student * CreateStudent(string _description)
 
 }
 
-Student * CreateStudent(Student * student)
-{
-	if (mainMode == 2)
-	{
-		return new Zaochn(student->ToString());
-	}
-	else if (mainMode == 3)
-	{
-		return new Ochn(student->ToString());
-	}
-	return new Student(student->ToString());
-}
-
 bool AddStudent(Student * newStudent)
 {
 	int newStudentsCount = studentsCount + 1;
@@ -434,7 +420,7 @@ bool SelectStudentNum(int & studentNum)
 	return false;
 }
 
-bool userStudentCreate(Student * student, string exampleStudent)
+bool userStudentCreate(Student ** student, string exampleStudent)
 {
 	AddConsoleTextColor("______Создание студента______", 224);
 	AddConsoleTextColor("Введите информацию о студенте в формате \"" + exampleStudent + "\"", 14);
@@ -443,16 +429,13 @@ bool userStudentCreate(Student * student, string exampleStudent)
 	getline(cin, sNewStudent);
 	Student *newStudent = CreateStudent(sNewStudent);
 	if ((bool)*newStudent) {
-		delete student;
-		student = CreateStudent(newStudent->ToString());
-		//*student = *newStudent;
-		delete newStudent;
+		delete *student;
+		*student = newStudent;
 		return true;
 	}
 	else
 	{
 		delete newStudent;
-		return false;
 	}
 	return false;
 }

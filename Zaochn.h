@@ -8,7 +8,7 @@ public:
 	Zaochn(string _fio, string _group, int _subjCount, SubjectMark *_subjectMarks, bool _isPayed);
 	Zaochn(string _description);
 	Zaochn(const Zaochn &ref);
-	virtual Zaochn &operator=(const Zaochn &right);
+	Zaochn &operator=(const Zaochn &ref);
 	virtual void Print() const;
 	virtual string ToString() const;
 	bool GetIsPayed() const;

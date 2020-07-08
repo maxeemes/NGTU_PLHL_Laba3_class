@@ -38,7 +38,7 @@ public:
 	static string GetListName();
 	static void SetListName(string _listName);
 	/****************************************/
-	virtual Student &operator=(const Student &ref);
+	Student &operator=(const Student &ref);
 	Student &operator=(SubjectMark _subjectMark);
 	Student &operator+=(SubjectMark _subjectMark);
 	bool &operator==(SubjectMark const _subjectMark) const;
